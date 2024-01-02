@@ -1,5 +1,10 @@
-<!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Puppy Pals</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
   <body>
     <div id="root"></div>
   </body>
@@ -27,6 +32,9 @@
 
     function App() {
       const [players, setPlayers] = React.useState([]);
+      const [idFromHash, setId] = React.useState(
+        +window.location.hash.slice(1)
+      );
 
       React.useEffect(() => {
         const fetchPlayers = async () => {
@@ -37,21 +45,45 @@
         fetchPlayers();
       }, []);
 
+      const setSinglePlayer = (player) => {};
+      const backClick = () => {};
+
       return (
         <div>
           <h1>Welcome to Puppy Pals</h1>
-          <div>
-            {players.map((player) => {
-              return (
-                <section>
-                  <div>
-                    <h2>{player.name}</h2>
-                    <p>{player.breed}</p>
-                  </div>
-                </section>
-              );
-            })}
-          </div>
+          {players.length > 1 ? (
+            <div className="players">
+              {players.map((player) => {
+                return (
+                  <section onClick={setSinglePlayer(player)}>
+                    <div>
+                      <h2>{player.name}</h2>
+                      <p>{player.breed}</p>
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          ) : (
+            <div>
+              <div className="button" onClick={backClick()}>
+                <h2>Back to All Puppies</h2>
+              </div>
+              <div className="players">
+                {players.map((player) => {
+                  return (
+                    <section className="singlePuppy">
+                      <div>
+                        <h2>{player.name}</h2>
+                        <p>{player.breed}</p>
+                        <img src={player.imageUrl} />
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       );
     }
