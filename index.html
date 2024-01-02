@@ -32,9 +32,8 @@
 
     function App() {
       const [players, setPlayers] = React.useState([]);
-      const [idFromHash, setId] = React.useState(
-        +window.location.hash.slice(1)
-      );
+      const [id, setId] = React.useState(+window.location.hash.slice(1));
+      const [singlePuppy, setSinglePuppy] = React.useState(null);
 
       React.useEffect(() => {
         const fetchPlayers = async () => {
@@ -43,19 +42,30 @@
           setPlayers(json.data.players);
         };
         fetchPlayers();
-      }, []);
 
-      const setSinglePlayer = (player) => {};
-      const backClick = () => {};
+        window.addEventListener("hashchange", () => {
+          setId(window.location.hash.slice(1));
+        });
+      }, []);
+      const filtered = players;
 
       return (
         <div>
           <h1>Welcome to Puppy Pals</h1>
-          {players.length > 1 ? (
+          {!id ? (
             <div className="players">
-              {players.map((player) => {
+              {filtered.map((player) => {
                 return (
-                  <section onClick={setSinglePlayer(player)}>
+                  <section
+                    key={player.id}
+                    onClick={() => {
+                      window.location.hash = player.id;
+                      const selectedPuppy = filtered.find(
+                        (p) => p.id === player.id
+                      );
+                      setSinglePuppy(selectedPuppy);
+                    }}
+                  >
                     <div>
                       <h2>{player.name}</h2>
                       <p>{player.breed}</p>
@@ -66,22 +76,28 @@
             </div>
           ) : (
             <div>
-              <div className="button" onClick={backClick()}>
+              <div
+                className="button"
+                onClick={() => {
+                  window.location.hash = "";
+                }}
+              >
                 <h2>Back to All Puppies</h2>
               </div>
-              <div className="players">
-                {players.map((player) => {
-                  return (
-                    <section className="singlePuppy">
-                      <div>
-                        <h2>{player.name}</h2>
-                        <p>{player.breed}</p>
-                        <img src={player.imageUrl} />
-                      </div>
-                    </section>
-                  );
-                })}
-              </div>
+              {singlePuppy ? (
+                <div className="players">
+                  <section key={singlePuppy.id} className="singlePuppy">
+                    <div>
+                      <h2>{singlePuppy.name}</h2>
+                      <p>
+                        {singlePuppy.breed}
+                        {console.log(singlePuppy)}
+                      </p>
+                      <img src={singlePuppy.imageUrl} />
+                    </div>
+                  </section>
+                </div>
+              ) : null}
             </div>
           )}
         </div>
