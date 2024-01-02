@@ -22,24 +22,36 @@
     import React from "react";
     import { createRoot } from "react-dom/client";
 
+    const COHORT = "2309-AM";
+    const puppyAPI = "https://fsa-puppy-bowl.herokuapp.com/api/" + COHORT;
+
     function App() {
-      const [numbers, setNumbers] = React.useState([1, 2, 3]);
+      const [players, setPlayers] = React.useState([]);
+
+      React.useEffect(() => {
+        const fetchPlayers = async () => {
+          const response = await fetch(puppyAPI + "/players");
+          const json = await response.json();
+          setPlayers(json.data.players);
+        };
+        fetchPlayers();
+      }, []);
 
       return (
         <div>
-          <h1>Numbers App {numbers.length}</h1>
-          <button
-            onClick={function () {
-              setNumbers([...numbers, Math.random()]);
-            }}
-          >
-            +
-          </button>
-          <ul>
-            {numbers.map(function (num) {
-              return <li>{num}</li>;
+          <h1>Welcome to Puppy Pals</h1>
+          <div>
+            {players.map((player) => {
+              return (
+                <section>
+                  <div>
+                    <h2>{player.name}</h2>
+                    <p>{player.breed}</p>
+                  </div>
+                </section>
+              );
             })}
-          </ul>
+          </div>
         </div>
       );
     }
